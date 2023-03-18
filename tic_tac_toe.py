@@ -29,13 +29,13 @@ class TicTacToe():
         self.player_message_o = "{}'s turn. Click a square to place an O!".format(self.player_name_o)
         self.playing = False
         self.game_completed = False
-        self.images = []
 
     def start_game(self):
         self.playing = True
         self.game_completed = False
         self.board = [" " for i in range(9)]
         self.current_symbol = "X"
+        self.images = []
         self.draw_board()
     
     def draw_board(self):
