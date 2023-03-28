@@ -1,6 +1,7 @@
 import pygame
 import pygame_gui
 from tic_tac_toe import TicTacToe
+from connect_four import ConnectFour
 
 # Need to initialize pygame before doing anything else
 pygame.init()
@@ -16,23 +17,33 @@ background.fill(pygame.Color('#000000'))
 
 manager = pygame_gui.UIManager((width, height), 'data/themes/theme.json')
 
-header_text = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((150, 25), (500, 100)), text='Welcome to HandyGame!', manager=manager)
-tic_tac_toe_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((50, 150), (200, 50)),
-                                             text='Play Tic-Tac-Toe',
-                                             manager=manager)
-exit_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((50, 250), (200, 50)),
-                                             text='Exit Game',
-                                             manager=manager)
+header_text = pygame_gui.elements.UILabel(relative_rect=pygame.Rect(
+    (150, 25), (500, 100)),
+                                          text='Welcome to HandyGame!',
+                                          manager=manager)
+tic_tac_toe_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect(
+    (50, 150), (200, 50)),
+                                                  text='Play Tic-Tac-Toe',
+                                                  manager=manager)
+connect_four_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((50, 250), (200, 50)),
+                                          text='Play Connect Four',
+                                          manager=manager)
+
+exit_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect(
+    (50, 350), (200, 50)),
+                                           text='Exit Game',
+                                           manager=manager)
 
 # Used for locking FPS
 clock = pygame.time.Clock()
 
-# Create the object for playing tic tac toe
+# Create the object for playing tic tac toe and connect four
 tic_tac_toe_game = TicTacToe(manager, screen)
+connect_four_game = ConnectFour(manager, screen)
 
 playing = True
 while playing:
-    time_delta = clock.tick(60)/1000.0
+    time_delta = clock.tick(60) / 1000.0
 
     # Support quitting the game
     for event in pygame.event.get():
@@ -43,9 +54,10 @@ while playing:
             if event.type == pygame_gui.UI_BUTTON_PRESSED:
                 if event.ui_element == tic_tac_toe_button:
                     tic_tac_toe_button.hide()
+                    connect_four_button.hide()
                     exit_button.hide()
                     header_text.hide()
-                    
+
                     tic_tac_toe_game.start_game()
                 if event.ui_element == exit_button:
                     playing = False
@@ -55,9 +67,28 @@ while playing:
                 tic_tac_toe_button.show()
                 exit_button.show()
                 header_text.show()
+            
+        if connect_four_game.playing == False:
+            if event.type == pygame_gui.UI_BUTTON_PRESSED:
+                if event.ui_element == connect_four_button:
+                    tic_tac_toe_button.hide()
+                    connect_four_button.hide()
+                    exit_button.hide()
+                    header_text.hide()
+
+                    connect_four_game.start_game()
+                if event.ui_element == exit_button:
+                    playing = False
+        else:
+            connect_four_game.process_event(event)
+            if connect_four_game.playing == False:
+                tic_tac_toe_button.show()
+                connect_four_button.show()
+                exit_button.show()
+                header_text.show()
 
         manager.process_events(event)
-    
+
     manager.update(time_delta)
 
     screen.blit(background, (0, 0))
