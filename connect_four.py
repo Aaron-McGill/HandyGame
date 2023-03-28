@@ -1,22 +1,22 @@
 import pygame
 import pygame_gui
 
-button1_position = (250, 150)
-button2_position = (350, 150)
-button3_position = (450, 150)
-button4_position = (550, 150)
-button5_position = (250, 250)
-button6_position = (350, 250)
-button7_position = (450, 250)
-button8_position = (550, 250)
-button9_position = (250, 350)
-button10_position = (350, 350)
-button11_position = (450, 350)
-button12_position = (550, 350)
-button13_position = (250, 450)
-button14_position = (350, 450)
-button15_position = (450, 450)
-button16_position = (550, 450)
+button1_position = (200, 75)
+button2_position = (300, 75)
+button3_position = (400, 75)
+button4_position = (500, 75)
+button5_position = (200, 175)
+button6_position = (300, 175)
+button7_position = (400, 175)
+button8_position = (500, 175)
+button9_position = (200, 275)
+button10_position = (300, 275)
+button11_position = (400, 275)
+button12_position = (500, 275)
+button13_position = (200, 375)
+button14_position = (300, 375)
+button15_position = (400, 375)
+button16_position = (500, 375)
 
 square_size = (100, 100)
 
@@ -32,8 +32,8 @@ class ConnectFour():
         # TODO: Make it so that these names can be passed in.
         self.player_name_x = "Player 1"
         self.player_name_o = "Player 2"
-        self.player_message_x = "{}'s turn. Click a square to place an X!".format(self.player_name_x)
-        self.player_message_o = "{}'s turn. Click a square to place an O!".format(self.player_name_o)
+        self.player_message_x = "{}'s turn. Select a column to drop an X!".format(self.player_name_x)
+        self.player_message_o = "{}'s turn. Select a column to drop an O!".format(self.player_name_o)
         self.playing = False
         self.game_completed = False
 
@@ -46,7 +46,7 @@ class ConnectFour():
         self.draw_board()
     
     def draw_board(self):
-        self.label = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((150, 25), (500, 100)), text=self.player_message_x, manager=self.manager)
+        self.label = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((150, 10), (500, 100)), text=self.player_message_x, manager=self.manager)
         self.g1 = pygame_gui.elements.UIButton(relative_rect=pygame.Rect(button1_position, square_size), text = '', manager=self.manager)
         self.g2 = pygame_gui.elements.UIButton(relative_rect=pygame.Rect(button2_position, square_size), text = '', manager=self.manager)
         self.g3 = pygame_gui.elements.UIButton(relative_rect=pygame.Rect(button3_position, square_size), text = '', manager=self.manager)
@@ -63,6 +63,36 @@ class ConnectFour():
         self.g14 = pygame_gui.elements.UIButton(relative_rect=pygame.Rect(button14_position, square_size), text = '', manager=self.manager)
         self.g15 = pygame_gui.elements.UIButton(relative_rect=pygame.Rect(button15_position, square_size), text = '', manager=self.manager)
         self.g16 = pygame_gui.elements.UIButton(relative_rect=pygame.Rect(button16_position, square_size), text = '', manager=self.manager)
+        self.place_holder_buttons = [
+            self.g1,
+            self.g2,
+            self.g3,
+            self.g4,
+            self.g5,
+            self.g6,
+            self.g7,
+            self.g8,
+            self.g9,
+            self.g10,
+            self.g11,
+            self.g12,
+            self.g13,
+            self.g14,
+            self.g15,
+            self.g16
+        ]
+        for button in self.place_holder_buttons:
+            button.disable()
+        self.column1_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((200, 475), (100, 50)), text = 'Select', manager=self.manager)
+        self.column2_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((300, 475), (100, 50)), text = 'Select', manager=self.manager)
+        self.column3_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((400, 475), (100, 50)), text = 'Select', manager=self.manager)
+        self.column4_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((500, 475), (100, 50)), text = 'Select', manager=self.manager)
+        self.column_buttons = [
+            self.column1_button,
+            self.column2_button,
+            self.column3_button,
+            self.column4_button
+        ]
     
     def process_event(self, event):
         if self.game_completed:
@@ -75,7 +105,7 @@ class ConnectFour():
 
     def process_game_event(self, event):
         if event.type == pygame_gui.UI_BUTTON_PRESSED:
-            if event.ui_element in [self.g1 or self.g5 or self.g9 or self.g13]:
+            if event.ui_element == self.column1_button:
                 if self.board[12] == " ":
                     self.board[12] = self.current_symbol
                     self.update_board(self.g13, button13_position)
@@ -88,7 +118,8 @@ class ConnectFour():
                 elif self.board[0] == " ":
                     self.board[0] = self.current_symbol
                     self.update_board(self.g1, button1_position)
-            if event.ui_element in [self.g2 or self.g6 or self.g10 or self.g14]:
+                    self.column1_button.disable()
+            if event.ui_element == self.column2_button:
                 if self.board[13] == " ":
                     self.board[13] = self.current_symbol
                     self.update_board(self.g14, button14_position)
@@ -101,7 +132,8 @@ class ConnectFour():
                 elif self.board[1] == " ":
                     self.board[1] = self.current_symbol
                     self.update_board(self.g2, button2_position)
-            if event.ui_element in [self.g3 or self.g7 or self.g11 or self.g15]:
+                    self.column2_button.disable()
+            if event.ui_element == self.column3_button:
                 if self.board[14] == " ":
                     self.board[14] = self.current_symbol
                     self.update_board(self.g15, button15_position)
@@ -114,7 +146,8 @@ class ConnectFour():
                 elif self.board[2] == " ":
                     self.board[2] = self.current_symbol
                     self.update_board(self.g3, button3_position)
-            if event.ui_element in [self.g4 or self.g8 or self.g12 or self.g16]:
+                    self.column3_button.disable()
+            if event.ui_element == self.column4_button:
                 if self.board[15] == " ":
                     self.board[15] = self.current_symbol
                     self.update_board(self.g16, button16_position)
@@ -127,6 +160,7 @@ class ConnectFour():
                 elif self.board[3] == " ":
                     self.board[3] = self.current_symbol
                     self.update_board(self.g4, button4_position)
+                    self.column3_button.disable()
             
     
     def is_victory(self, icon):
@@ -145,48 +179,15 @@ class ConnectFour():
             return False
 
     def is_draw(self):
-        print("Draw?")
-        for idx, square in enumerate(self.board):
-            print(str(idx) + ":" + square)
         if " " not in self.board:
             return True
         else:
             return False
     
-     # TODO: Is there a cleaner way to remove the board?
     def clear_board(self):
-        if self.g1.visible == 1:
-            self.g1.kill()
-        if self.g2.visible == 1:
-            self.g2.kill()
-        if self.g3.visible == 1:
-            self.g3.kill()
-        if self.g4.visible == 1:
-            self.g4.kill()
-        if self.g5.visible == 1:
-            self.g5.kill()
-        if self.g6.visible == 1:
-            self.g6.kill()
-        if self.g7.visible == 1:
-            self.g7.kill()
-        if self.g8.visible == 1:
-            self.g8.kill()
-        if self.g9.visible == 1:
-            self.g9.kill()
-        if self.g10.visible == 1:
-            self.g10.kill()
-        if self.g11.visible == 1:
-            self.g11.kill()
-        if self.g12.visible == 1:
-            self.g12.kill()
-        if self.g13.visible == 1:
-            self.g13.kill()
-        if self.g14.visible == 1:
-            self.g14.kill()
-        if self.g15.visible == 1:
-            self.g15.kill()
-        if self.g16.visible == 1:
-            self.g16.kill()
+        for button in self.place_holder_buttons:
+            if button.visible == 1:
+                button.kill()
 
         for image in self.images:
             image.kill()
@@ -195,38 +196,8 @@ class ConnectFour():
         self.exit_button.kill()
     
     def handle_game_end(self, new_header):
-        if self.g1.is_enabled:
-            self.g1.disable()
-        if self.g2.is_enabled:
-            self.g2.disable()
-        if self.g3.is_enabled:
-            self.g3.disable()
-        if self.g4.is_enabled:
-            self.g4.disable()
-        if self.g5.is_enabled:
-            self.g5.disable()
-        if self.g6.is_enabled:
-            self.g6.disable()
-        if self.g7.is_enabled:
-            self.g7.disable()
-        if self.g8.is_enabled:
-            self.g8.disable()
-        if self.g9.is_enabled:
-            self.g9.disable()
-        if self.g10.is_enabled:
-            self.g10.disable()
-        if self.g11.is_enabled:
-            self.g11.disable()
-        if self.g12.is_enabled:
-            self.g12.disable()
-        if self.g13.is_enabled:
-            self.g13.disable()
-        if self.g14.is_enabled:
-            self.g14.disable()
-        if self.g15.is_enabled:
-            self.g15.disable()
-        if self.g16.is_enabled:
-            self.g16.disable()
+        for button in self.column_buttons:
+            button.kill()
         
         self.label.set_text(new_header)
         self.game_completed = True
