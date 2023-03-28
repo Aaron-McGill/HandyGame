@@ -1,6 +1,19 @@
 # HandyGame
 
-This branch is adding a simple UI built with [pygame](https://www.pygame.org/docs/) and [pygame_gui](https://pygame-gui.readthedocs.io/en/latest/index.html).
+This is the client for the server defined here: https://github.com/Aaron-McGill/HandyGameServer
 
-The logic for the game is in the game_ui.py file. The game.py file is not currently being used; it's just there for reference as the UI is still a work
-in progress.
+To run this locally, you'd open three terminals.
+
+In the first terminal, you'd clone the HandyGameServer project above and run it using this command:
+
+`
+py app.py
+`
+
+In the other two terminals, you'd open a copy of this project and run this command:
+
+`
+py game_ui.py
+`
+
+With the server running, you should be able to play a game of tic-tac-toe from the two windows that opened. Currently, only tic-tac-toe has online support. Connect Four is still designed to be played from a single window.
