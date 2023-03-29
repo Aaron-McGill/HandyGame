@@ -64,7 +64,7 @@ game_client = Client(host)
 
 # Create the object for playing tic tac toe and connect four
 tic_tac_toe_game = TicTacToe(manager, screen, game_client)
-connect_four_game = ConnectFour(manager, screen)
+connect_four_game = ConnectFour(manager, screen, game_client)
 
 global player_name
 
@@ -97,6 +97,22 @@ while playing:
         if response.json()['current_player'] == player_name:
             tic_tac_toe_game.waiting_for_opponent_move = False
             tic_tac_toe_game.update_interface_from_board(response.json()['board'])
+        else:
+            time.sleep(1)
+    
+    if connect_four_game.waiting_to_join_game:
+        response = game_client.get_game(connect_four_game.game_id)
+        if response.json()['active']:
+            connect_four_game.waiting_to_join_game = False
+            connect_four_game.initialize_game_board()
+        else:
+            time.sleep(1)
+    
+    if connect_four_game.waiting_for_opponent_move:
+        response = game_client.get_game(connect_four_game.game_id)
+        if response.json()['current_player'] == player_name:
+            connect_four_game.waiting_for_opponent_move = False
+            connect_four_game.update_interface_from_board(response.json()['board'])
         else:
             time.sleep(1)
 
@@ -134,7 +150,7 @@ while playing:
                 if event.ui_element == connect_four_button:
                     hide_start_menu()
 
-                    connect_four_game.start_game()
+                    connect_four_game.start_game(player_name)
                 if event.ui_element == exit_button:
                     playing = False
         else:

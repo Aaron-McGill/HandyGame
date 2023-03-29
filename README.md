@@ -13,7 +13,7 @@ py app.py
 In the other two terminals, you'd open a copy of this project and run this command:
 
 `
-py game_ui.py
+py main.py
 `
 
 With the server running, you should be able to play a game of tic-tac-toe from the two windows that opened. Currently, only tic-tac-toe has online support. Connect Four is still designed to be played from a single window.

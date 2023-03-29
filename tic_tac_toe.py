@@ -47,7 +47,6 @@ class TicTacToe():
         self.game_completed = False
         self.board = [" " for i in range(9)]
         self.images = []
-        self.image_positions = []
         self.player_name = player_name
 
         self.loading_label = pygame_gui.elements.UILabel(relative_rect=pygame.Rect(
@@ -73,7 +72,7 @@ class TicTacToe():
         else:
             self.symbol = "O"
             self.opponent_symbol = "X"
-        self.your_turn_message = "{}, it's your turn. Click a square to place a {}!".format(self.player_name, self.symbol)
+        self.your_turn_message = "{}, it's your turn. Click a square to place an {}!".format(self.player_name, self.symbol)
         if self.created_session:
             self.draw_board(self.your_turn_message, True)
         else:
@@ -92,7 +91,7 @@ class TicTacToe():
         self.g8 = pygame_gui.elements.UIButton(relative_rect=pygame.Rect(button8_position, square_size), text = '', manager=self.manager)
         self.g9 = pygame_gui.elements.UIButton(relative_rect=pygame.Rect(button9_position, square_size), text = '', manager=self.manager)
         self.buttons = [self.g1, self.g2, self.g3, self.g4, self.g5, self.g6, self.g7, self.g8, self.g9]
-        if enable_buttons == False:
+        if not enable_buttons:
             for button in self.buttons:
                 button.disable()
     

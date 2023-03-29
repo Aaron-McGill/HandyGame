@@ -18,6 +18,25 @@ button14_position = (300, 375)
 button15_position = (400, 375)
 button16_position = (500, 375)
 
+button_positions = [
+    button1_position,
+    button2_position,
+    button3_position,
+    button4_position,
+    button5_position,
+    button6_position,
+    button7_position,
+    button8_position,
+    button9_position,
+    button10_position,
+    button11_position,
+    button12_position,
+    button13_position,
+    button14_position,
+    button15_position,
+    button16_position,
+]
+
 square_size = (100, 100)
 
 x_image = pygame.image.load("data/images/x_symbol.png")
@@ -25,28 +44,59 @@ x_image = pygame.transform.scale(x_image, square_size)
 o_image = pygame.image.load("data/images/o_symbol.png")
 o_image = pygame.transform.scale(o_image, square_size)
 
+opponents_turn_message = "Waiting for opponent to make a move..."
+
 class ConnectFour():
-    def __init__(self, manager, screen):
+    def __init__(self, manager, screen, game_client):
         self.manager = manager
         self.screen = screen
-        # TODO: Make it so that these names can be passed in.
-        self.player_name_x = "Player 1"
-        self.player_name_o = "Player 2"
-        self.player_message_x = "{}'s turn. Select a column to drop an X!".format(self.player_name_x)
-        self.player_message_o = "{}'s turn. Select a column to drop an O!".format(self.player_name_o)
         self.playing = False
         self.game_completed = False
+        self.game_client = game_client
+        self.waiting_to_join_game = False
+        self.waiting_for_opponent_move = False
 
-    def start_game(self):
+    def start_game(self, player_name):
         self.playing = True
         self.game_completed = False
         self.board = [" " for i in range(16)]
-        self.current_symbol = "X"
         self.images = []
-        self.draw_board()
+        self.player_name = player_name
+        self.column1_full = False
+        self.column2_full = False
+        self.column3_full = False
+        self.column4_full = False
+
+        self.loading_label = pygame_gui.elements.UILabel(relative_rect=pygame.Rect(
+            (175, 100), (500, 100)),
+                                          text='Looking for a game to join...',
+                                          manager=self.manager)
+        game_session_info = self.game_client.join_game('connectFour', self.player_name)
+        self.game_id = game_session_info['game_id']
+        self.created_session = game_session_info['created']
+        self.waiting_to_join_game = game_session_info['waiting']
+
+        if self.waiting_to_join_game == False:
+            self.initialize_game_board()                                  
     
-    def draw_board(self):
-        self.label = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((150, 10), (500, 100)), text=self.player_message_x, manager=self.manager)
+    def initialize_game_board(self):
+        self.loading_label.kill()
+
+        if self.created_session:
+            self.symbol = "X"
+            self.opponent_symbol = "O"
+        else:
+            self.symbol = "O"
+            self.opponent_symbol = "X"
+        self.your_turn_message = "{}, it's your turn. Select a column to drop an {}!".format(self.player_name, self.symbol)
+        if self.created_session:
+            self.draw_board(self.your_turn_message, True)
+        else:
+            self.draw_board(opponents_turn_message, False)
+            self.waiting_for_opponent_move = True
+
+    def draw_board(self, label_text, enable_buttons):
+        self.label = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((150, 10), (500, 100)), text=label_text, manager=self.manager)
         self.g1 = pygame_gui.elements.UIButton(relative_rect=pygame.Rect(button1_position, square_size), text = '', manager=self.manager)
         self.g2 = pygame_gui.elements.UIButton(relative_rect=pygame.Rect(button2_position, square_size), text = '', manager=self.manager)
         self.g3 = pygame_gui.elements.UIButton(relative_rect=pygame.Rect(button3_position, square_size), text = '', manager=self.manager)
@@ -93,12 +143,20 @@ class ConnectFour():
             self.column3_button,
             self.column4_button
         ]
+        if not enable_buttons:
+            for button in self.column_buttons:
+                button.disable()
     
     def process_event(self, event):
         if self.game_completed:
             if event.type == pygame_gui.UI_BUTTON_PRESSED:
                 if event.ui_element == self.exit_button:
                     self.clear_board()
+                    # If we created the session, we're responsible
+                    # for cleaning it up as well.
+                    if self.created_session == True:
+                        self.game_client.delete_game(self.game_id)
+                    self.playing = False
                     self.playing = False
         else:
             self.process_game_event(event)
@@ -107,62 +165,56 @@ class ConnectFour():
         if event.type == pygame_gui.UI_BUTTON_PRESSED:
             if event.ui_element == self.column1_button:
                 if self.board[12] == " ":
-                    self.board[12] = self.current_symbol
-                    self.update_board(self.g13, button13_position)
+                    self.handle_board_change_for_index(12)
                 elif self.board[8] == " ":
-                    self.board[8] = self.current_symbol
-                    self.update_board(self.g9, button9_position)
+                    self.handle_board_change_for_index(8)
                 elif self.board[4] == " ":
-                    self.board[4] = self.current_symbol
-                    self.update_board(self.g5, button5_position)
+                    self.handle_board_change_for_index(4)
                 elif self.board[0] == " ":
-                    self.board[0] = self.current_symbol
-                    self.update_board(self.g1, button1_position)
+                    self.handle_board_change_for_index(0)
                     self.column1_button.disable()
+                    self.column1_full = True
             if event.ui_element == self.column2_button:
                 if self.board[13] == " ":
-                    self.board[13] = self.current_symbol
-                    self.update_board(self.g14, button14_position)
+                    self.handle_board_change_for_index(13)
                 elif self.board[9] == " ":
-                    self.board[9] = self.current_symbol
-                    self.update_board(self.g10, button10_position)
+                    self.handle_board_change_for_index(9)
                 elif self.board[5] == " ":
-                    self.board[5] = self.current_symbol
-                    self.update_board(self.g6, button6_position)
+                    self.handle_board_change_for_index(5)
                 elif self.board[1] == " ":
-                    self.board[1] = self.current_symbol
-                    self.update_board(self.g2, button2_position)
+                    self.handle_board_change_for_index(1)
                     self.column2_button.disable()
+                    self.column2_full = True
             if event.ui_element == self.column3_button:
                 if self.board[14] == " ":
-                    self.board[14] = self.current_symbol
-                    self.update_board(self.g15, button15_position)
+                    self.handle_board_change_for_index(14)
                 elif self.board[10] == " ":
-                    self.board[10] = self.current_symbol
-                    self.update_board(self.g11, button11_position)
+                    self.handle_board_change_for_index(10)
                 elif self.board[6] == " ":
-                    self.board[6] = self.current_symbol
-                    self.update_board(self.g7, button7_position)
+                    self.handle_board_change_for_index(6)
                 elif self.board[2] == " ":
-                    self.board[2] = self.current_symbol
-                    self.update_board(self.g3, button3_position)
+                    self.handle_board_change_for_index(2)
                     self.column3_button.disable()
+                    self.column3_full = True
             if event.ui_element == self.column4_button:
                 if self.board[15] == " ":
-                    self.board[15] = self.current_symbol
-                    self.update_board(self.g16, button16_position)
+                    self.handle_board_change_for_index(15)
                 elif self.board[11] == " ":
-                    self.board[11] = self.current_symbol
-                    self.update_board(self.g12, button12_position)
+                    self.handle_board_change_for_index(11)
                 elif self.board[7] == " ":
-                    self.board[7] = self.current_symbol
-                    self.update_board(self.g8, button8_position)
+                    self.handle_board_change_for_index(7)
                 elif self.board[3] == " ":
-                    self.board[3] = self.current_symbol
-                    self.update_board(self.g4, button4_position)
-                    self.column3_button.disable()
+                    self.handle_board_change_for_index(3)
+                    self.column4_button.disable()
+                    self.column4_full = True
+
+    def handle_board_change_for_index(self, index):
+        self.board[index] = self.symbol
+        self.game_client.make_move(self.game_id, self.board)
+        button_position = button_positions[index]
+        button = self.place_holder_buttons[index]
+        self.update_board(button, button_position)
             
-    
     def is_victory(self, icon):
         if  (self.board[0] == icon and self.board[1] == icon and self.board[2] == icon and self.board[3] == icon) or \
             (self.board[4] == icon and self.board[5] == icon and self.board[6] == icon and self.board[7] == icon) or \
@@ -207,22 +259,65 @@ class ConnectFour():
 
     def update_board(self, clicked_button, button_position):
         clicked_button.kill()
-        if self.current_symbol == "X":
+        if self.symbol == "X":
             self.images.append(pygame_gui.elements.UIImage(relative_rect=pygame.Rect(button_position, square_size), image_surface=x_image, manager=self.manager))
         else:
             self.images.append(pygame_gui.elements.UIImage(relative_rect=pygame.Rect(button_position, square_size), image_surface=o_image, manager=self.manager))
 
-        if self.is_victory(self.current_symbol):
-            if self.current_symbol == "X":
-                self.handle_game_end("{} (X) is the winner!".format(self.player_name_x))
-            else:
-                self.handle_game_end("{} (O) is the winner!".format(self.player_name_o))
+        if self.is_victory(self.symbol):
+            self.handle_game_end("Congratulations {}, you win!".format(self.player_name))
         elif self.is_draw():
             self.handle_game_end("It's a draw!")
         else:
-            if self.current_symbol == "X":
-                self.current_symbol = "O"
-                self.label.set_text(self.player_message_o)
-            else:
-                self.current_symbol = "X"
-                self.label.set_text(self.player_message_x)
+            if self.column1_button.visible == 1 and not self.column1_full:
+                self.column1_button.disable()
+            if self.column2_button.visible == 1 and not self.column2_full:
+                self.column2_button.disable()
+            if self.column3_button.visible == 1 and not self.column3_full:
+                self.column3_button.disable()
+            if self.column4_button.visible == 1 and not self.column4_full:
+                self.column4_button.disable()
+            self.label.set_text(opponents_turn_message)
+            self.waiting_for_opponent_move = True
+    
+    def update_interface_from_board(self, updated_board):
+        self.waiting_for_opponent_move = False
+        self.board = updated_board
+
+        # Check if the select buttons need to be disabled because the user filled up a column
+        if not self.column1_full and self.board[12] != " " and self.board[8] != " " and self.board[4] != " " and self.board[0] != " ":
+            self.column1_full = True
+        if not self.column2_full and self.board[13] != " " and self.board[9] != " " and self.board[5] != " " and self.board[1] != " ":
+            self.column2_full = True
+        if not self.column3_full and self.board[14] != " " and self.board[10] != " " and self.board[6] != " " and self.board[2] != " ":
+            self.column3_full = True
+        if not self.column4_full and self.board[15] != " " and self.board[11] != " " and self.board[7] != " " and self.board[3] != " ":
+            self.column4_full = True
+
+        for i, square in enumerate(updated_board):
+            if square != " ":
+                button = self.place_holder_buttons[i]
+                # The button's still there even though there's a symbol at that
+                # position on the board. Remove the button and add an image at
+                # its location.
+                if button.visible == 1:
+                    button_position = button_positions[i]
+                    button.kill()
+                    if square == "X":
+                        self.images.append(pygame_gui.elements.UIImage(relative_rect=pygame.Rect(button_position, square_size), image_surface=x_image, manager=self.manager))
+                    else:
+                        self.images.append(pygame_gui.elements.UIImage(relative_rect=pygame.Rect(button_position, square_size), image_surface=o_image, manager=self.manager))
+        if self.is_victory(self.opponent_symbol):
+            self.handle_game_end("You lose!")
+        elif self.is_draw():
+            self.handle_game_end("It's a draw!")
+        else:
+            if self.column1_button.visible == 1 and not self.column1_full:
+                self.column1_button.enable()
+            if self.column2_button.visible == 1 and not self.column2_full:
+                self.column2_button.enable()
+            if self.column3_button.visible == 1 and not self.column3_full:
+                self.column3_button.enable()
+            if self.column4_button.visible == 1 and not self.column4_full:
+                self.column4_button.enable()
+            self.label.set_text(self.your_turn_message)
