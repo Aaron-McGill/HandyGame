@@ -58,8 +58,8 @@ clock = pygame.time.Clock()
 
 # Set up REST client for interacting with server
 # If a value is not provided for the host, just fall
-# back to localhost
-host = os.environ.get('SERVER_HOST', 'http://127.0.0.1:8080')
+# back to server hosted in cloud
+host = os.environ.get('SERVER_HOST', 'https://handygame.onrender.com')
 game_client = Client(host)
 
 # Create the object for playing tic tac toe and connect four
