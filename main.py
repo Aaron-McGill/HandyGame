@@ -120,6 +120,12 @@ while playing:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             playing = False
+            # If we're waiting on someone to join our game session and then exit the app,
+            # delete the game session we created.
+            if connect_four_game.waiting_to_join_game and connect_four_game.created_session:
+                game_client.delete_game(connect_four_game.game_id)
+            if tic_tac_toe_game.waiting_to_join_game and tic_tac_toe_game.created_session:
+                game_client.delete_game(tic_tac_toe_game.game_id)
 
         # Handle getting user name from initial screen
         if event.type == pygame_gui.UI_BUTTON_PRESSED:
