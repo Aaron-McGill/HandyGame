@@ -59,6 +59,7 @@ class TicTacToe():
         self.game_id = game_session_info['game_id']
         self.created_session = game_session_info['created']
         self.waiting_to_join_game = game_session_info['waiting']
+        self.player_id = game_session_info["player_id"]
 
         if self.waiting_to_join_game == False:
             self.initialize_game_board()

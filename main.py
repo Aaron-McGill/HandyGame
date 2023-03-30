@@ -94,7 +94,7 @@ while playing:
     
     if tic_tac_toe_game.waiting_for_opponent_move:
         response = game_client.get_game(tic_tac_toe_game.game_id)
-        if response.json()['current_player'] == player_name:
+        if response.json()['current_player'] == tic_tac_toe_game.player_id:
             tic_tac_toe_game.waiting_for_opponent_move = False
             tic_tac_toe_game.update_interface_from_board(response.json()['board'])
         else:
@@ -110,7 +110,7 @@ while playing:
     
     if connect_four_game.waiting_for_opponent_move:
         response = game_client.get_game(connect_four_game.game_id)
-        if response.json()['current_player'] == player_name:
+        if response.json()['current_player'] == connect_four_game.player_id:
             connect_four_game.waiting_for_opponent_move = False
             connect_four_game.update_interface_from_board(response.json()['board'])
         else:
