@@ -5,13 +5,15 @@ import pygame_gui
 from tic_tac_toe import TicTacToe
 from connect_four import ConnectFour
 from game_client import Client
+from connect_four_manual import ConnectFourManual
+from tic_tac_toe_manual import TicTacToeManual
 
 # Need to initialize pygame before doing anything else
 pygame.init()
 
 # Create display surface
 width = 800
-height = 600
+height = 650
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("HandyGame")
 
@@ -26,15 +28,23 @@ header_text = pygame_gui.elements.UILabel(relative_rect=pygame.Rect(
                                           text='Welcome to HandyGame!',
                                           manager=manager, visible=0)
 tic_tac_toe_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect(
-    (50, 150), (200, 50)),
+    (50, 125), (250, 50)),
                                                   text='Play Tic-Tac-Toe',
                                                   manager=manager, visible=0)
-connect_four_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((50, 250), (200, 50)),
+connect_four_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((50, 225), (250, 50)),
                                           text='Play Connect Four',
                                           manager=manager, visible=0)
 
+connect_four_manual_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((50, 325), (250, 50)),
+                                          text='View Connect Four Manual',
+                                          manager=manager, visible=0)
+
+tic_tac_toe_manual_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((50, 425), (250, 50)),
+                                          text='View Tic-Tac-Toe Manual',
+                                          manager=manager, visible=0)
+
 exit_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect(
-    (50, 350), (200, 50)),
+    (50, 525), (250, 50)),
                                            text='Exit Game',
                                            manager=manager, visible=0)
 
@@ -71,12 +81,16 @@ global player_name
 def hide_start_menu():
     tic_tac_toe_button.hide()
     connect_four_button.hide()
+    connect_four_manual_button.hide()
+    tic_tac_toe_manual_button.hide()
     exit_button.hide()
     header_text.hide()
 
 def show_start_menu():
     tic_tac_toe_button.show()
     connect_four_button.show()
+    connect_four_manual_button.show()
+    tic_tac_toe_manual_button.show()
     exit_button.show()
     header_text.show()
 
@@ -163,6 +177,16 @@ while playing:
             connect_four_game.process_event(event)
             if connect_four_game.playing == False:
                 show_start_menu()
+        
+        # Display Connect Four manual
+        if event.type == pygame_gui.UI_BUTTON_PRESSED:
+            if event.ui_element == connect_four_manual_button:
+                ConnectFourManual(manager, connect_four_manual_button)
+        
+        # Display Tic-Tac-Toe manual
+        if event.type == pygame_gui.UI_BUTTON_PRESSED:
+            if event.ui_element == tic_tac_toe_manual_button:
+                TicTacToeManual(manager, tic_tac_toe_manual_button)
 
         manager.process_events(event)
 

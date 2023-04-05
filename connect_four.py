@@ -1,6 +1,8 @@
 import pygame
 import pygame_gui
 
+from connect_four_manual import ConnectFourManual
+
 button1_position = (200, 75)
 button2_position = (300, 75)
 button3_position = (400, 75)
@@ -147,6 +149,7 @@ class ConnectFour():
         if not enable_buttons:
             for button in self.column_buttons:
                 button.disable()
+        self.manual_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((325, 550), (150, 50)), text = 'View Manual', manager=self.manager)
     
     def process_event(self, event):
         if self.game_completed:
@@ -208,6 +211,8 @@ class ConnectFour():
                     self.handle_board_change_for_index(3)
                     self.column4_button.disable()
                     self.column4_full = True
+            if event.ui_element == self.manual_button:
+                ConnectFourManual(self.manager, self.manual_button)
 
     def handle_board_change_for_index(self, index):
         self.board[index] = self.symbol
@@ -251,10 +256,11 @@ class ConnectFour():
     def handle_game_end(self, new_header):
         for button in self.column_buttons:
             button.kill()
+        self.manual_button.kill()
         
         self.label.set_text(new_header)
         self.game_completed = True
-        self.exit_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((300, 500), (200, 50)),
+        self.exit_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((300, 550), (200, 50)),
                                              text='Return to Main Menu',
                                              manager=self.manager)
 

@@ -1,6 +1,8 @@
 import pygame
 import pygame_gui
 
+from tic_tac_toe_manual import TicTacToeManual
+
 button1_position = (250, 150)
 button2_position = (350, 150)
 button3_position = (450, 150)
@@ -95,6 +97,7 @@ class TicTacToe():
         if not enable_buttons:
             for button in self.buttons:
                 button.disable()
+        self.manual_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((325, 500), (150, 50)), text = 'View Manual', manager=self.manager)
     
     def process_event(self, event):
         if self.game_completed:
@@ -117,6 +120,8 @@ class TicTacToe():
                     button_position = button_positions[i]
                     self.game_client.make_move(self.game_id, self.board)
                     self.update_board(button, button_position)
+            if event.ui_element == self.manual_button:
+                TicTacToeManual(self.manager, self.manual_button)
     
     def is_victory(self, icon):
         if (self.board[0] == icon and self.board[1] == icon and self.board[2] == icon) or \
@@ -152,6 +157,7 @@ class TicTacToe():
         for button in self.buttons:
             if button.is_enabled:
                 button.disable()
+        self.manual_button.kill()
         
         self.label.set_text(new_header)
         self.game_completed = True
