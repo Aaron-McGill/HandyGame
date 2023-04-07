@@ -99,33 +99,31 @@ while playing:
     time_delta = clock.tick(30) / 1000.0
 
     if tic_tac_toe_game.waiting_to_join_game:
-        response = game_client.get_game(tic_tac_toe_game.game_id)
-        if response.json()['active']:
+        if game_client.is_game_ready(tic_tac_toe_game.game_id):
             tic_tac_toe_game.waiting_to_join_game = False
             tic_tac_toe_game.initialize_game_board()
         else:
             time.sleep(1)
     
     if tic_tac_toe_game.waiting_for_opponent_move:
-        response = game_client.get_game(tic_tac_toe_game.game_id)
-        if response.json()['current_player'] == tic_tac_toe_game.player_id:
+        if game_client.is_my_turn(tic_tac_toe_game.game_id, tic_tac_toe_game.player_id):
             tic_tac_toe_game.waiting_for_opponent_move = False
+            response = game_client.get_game(tic_tac_toe_game.game_id)
             tic_tac_toe_game.update_interface_from_board(response.json()['board'])
         else:
             time.sleep(1)
     
     if connect_four_game.waiting_to_join_game:
-        response = game_client.get_game(connect_four_game.game_id)
-        if response.json()['active']:
+        if game_client.is_game_ready(connect_four_game.game_id):
             connect_four_game.waiting_to_join_game = False
             connect_four_game.initialize_game_board()
         else:
             time.sleep(1)
     
     if connect_four_game.waiting_for_opponent_move:
-        response = game_client.get_game(connect_four_game.game_id)
-        if response.json()['current_player'] == connect_four_game.player_id:
+        if game_client.is_my_turn(connect_four_game.game_id, connect_four_game.player_id):
             connect_four_game.waiting_for_opponent_move = False
+            response = game_client.get_game(connect_four_game.game_id)
             connect_four_game.update_interface_from_board(response.json()['board'])
         else:
             time.sleep(1)

@@ -31,3 +31,13 @@ class Client():
     def make_move(self, game_id, updated_board):
         response = requests.put(self.host + "/games/" + str(game_id) + "/makeMove", json={"board": updated_board})
         response.raise_for_status()
+
+    def is_game_ready(self, game_id):
+        response = requests.get(self.host + "/games/" + str(game_id) + "/gameReady")
+        response.raise_for_status()
+        return response.text == "true"
+    
+    def is_my_turn(self, game_id, player_id):
+        response = requests.get(self.host + "/games/" + str(game_id) + "/currentPlayer")
+        response.raise_for_status()
+        return response.text == player_id
