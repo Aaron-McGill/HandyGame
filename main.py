@@ -23,30 +23,30 @@ background.fill(pygame.Color('#000000'))
 manager = pygame_gui.UIManager((width, height), 'data/themes/theme.json')
 
 # Start menu UI elements
-header_text = pygame_gui.elements.UILabel(relative_rect=pygame.Rect(
-    (150, 25), (500, 100)),
-                                          text='Welcome to HandyGame!',
-                                          manager=manager, visible=0)
 tic_tac_toe_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect(
-    (50, 125), (250, 50)),
+    (50, 100), (250, 50)),
                                                   text='Play Tic-Tac-Toe',
                                                   manager=manager, visible=0)
-connect_four_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((50, 225), (250, 50)),
+connect_four_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((50, 200), (250, 50)),
                                           text='Play Connect Four',
                                           manager=manager, visible=0)
 
-connect_four_manual_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((50, 325), (250, 50)),
+connect_four_manual_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((50, 300), (250, 50)),
                                           text='View Connect Four Manual',
                                           manager=manager, visible=0)
 
-tic_tac_toe_manual_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((50, 425), (250, 50)),
+tic_tac_toe_manual_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((50, 400), (250, 50)),
                                           text='View Tic-Tac-Toe Manual',
                                           manager=manager, visible=0)
 
 exit_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect(
-    (50, 525), (250, 50)),
+    (50, 500), (250, 50)),
                                            text='Exit Game',
                                            manager=manager, visible=0)
+
+logo_image = pygame.image.load("data/images/logo.png")
+logo_image = pygame.transform.scale(logo_image, (350, 300))
+logo = pygame_gui.elements.UIImage(relative_rect=pygame.Rect((325, 100), (475, 300)), image_surface=logo_image, manager=manager, visible=0)
 
 # Name prompt elements
 name_prompt = pygame_gui.elements.UILabel(relative_rect=pygame.Rect(
@@ -84,7 +84,7 @@ def hide_start_menu():
     connect_four_manual_button.hide()
     tic_tac_toe_manual_button.hide()
     exit_button.hide()
-    header_text.hide()
+    logo.hide()
 
 def show_start_menu():
     tic_tac_toe_button.show()
@@ -92,7 +92,7 @@ def show_start_menu():
     connect_four_manual_button.show()
     tic_tac_toe_manual_button.show()
     exit_button.show()
-    header_text.show()
+    logo.show()
 
 playing = True
 while playing:
@@ -146,7 +146,6 @@ while playing:
                 name_prompt.kill()
                 name_text_box.kill()
                 submit_button.kill()
-                header_text.set_text(player_name + ', welcome to HandyGame!')
                 show_start_menu()
 
         if tic_tac_toe_game.playing == False:

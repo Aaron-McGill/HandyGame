@@ -3,22 +3,22 @@ import pygame_gui
 
 from connect_four_manual import ConnectFourManual
 
-button1_position = (200, 75)
-button2_position = (300, 75)
-button3_position = (400, 75)
-button4_position = (500, 75)
-button5_position = (200, 175)
-button6_position = (300, 175)
-button7_position = (400, 175)
-button8_position = (500, 175)
-button9_position = (200, 275)
-button10_position = (300, 275)
-button11_position = (400, 275)
-button12_position = (500, 275)
-button13_position = (200, 375)
-button14_position = (300, 375)
-button15_position = (400, 375)
-button16_position = (500, 375)
+button1_position = (200, 100)
+button2_position = (300, 100)
+button3_position = (400, 100)
+button4_position = (500, 100)
+button5_position = (200, 200)
+button6_position = (300, 200)
+button7_position = (400, 200)
+button8_position = (500, 200)
+button9_position = (200, 300)
+button10_position = (300, 300)
+button11_position = (400, 300)
+button12_position = (500, 300)
+button13_position = (200, 400)
+button14_position = (300, 400)
+button15_position = (400, 400)
+button16_position = (500, 400)
 
 button_positions = [
     button1_position,
@@ -136,10 +136,10 @@ class ConnectFour():
         ]
         for button in self.place_holder_buttons:
             button.disable()
-        self.column1_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((200, 475), (100, 50)), text = 'Select', manager=self.manager)
-        self.column2_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((300, 475), (100, 50)), text = 'Select', manager=self.manager)
-        self.column3_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((400, 475), (100, 50)), text = 'Select', manager=self.manager)
-        self.column4_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((500, 475), (100, 50)), text = 'Select', manager=self.manager)
+        self.column1_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((200, 500), (100, 50)), text = 'Select', manager=self.manager)
+        self.column2_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((300, 500), (100, 50)), text = 'Select', manager=self.manager)
+        self.column3_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((400, 500), (100, 50)), text = 'Select', manager=self.manager)
+        self.column4_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((500, 500), (100, 50)), text = 'Select', manager=self.manager)
         self.column_buttons = [
             self.column1_button,
             self.column2_button,
@@ -149,7 +149,7 @@ class ConnectFour():
         if not enable_buttons:
             for button in self.column_buttons:
                 button.disable()
-        self.manual_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((325, 550), (150, 50)), text = 'View Manual', manager=self.manager)
+        self.manual_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((325, 575), (150, 50)), text = 'View Manual', manager=self.manager)
     
     def process_event(self, event):
         if self.game_completed:
