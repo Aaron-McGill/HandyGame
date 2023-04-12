@@ -6,7 +6,7 @@ class TicTacToeManual(UIMessageWindow):
     def __init__(self, manager, button):
         super().__init__(rect=pygame.Rect((10, 10), (600, 600)), manager=manager, window_title='Tic-Tac-Toe Manual', object_id='#tic_tac_toe_manual', 
             html_message='<font color=normal_text>'
-                         'The goal of the game is to get three tokens of the same type in a row, either horizontally, vertically, or diagonally.<br><br>'
+                         'The goal of the game is to get three tokens of the same type in a line, either horizontally, vertically, or diagonally.<br><br>'
                          'To place a token, click on a square on the board.<br><br>'
                          'The game will end in a draw when the board is full and neither player has connected three tokens.<br><br>'
                          'The image below has an example of a winning board. In this case, the player using the X token won, connecting three tokens diagonally.<br><br>'
